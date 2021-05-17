@@ -68,7 +68,7 @@ class RogersExperiment(Experiment):
 
     def create_node(self, network, participant):
         """Make a new node for participants."""
-        if network.role == "practice" or network.role == "catch":
+        if network.role in ["practice", "catch"]:
             return RogersAgentFounder(network=network, participant=participant)
         elif network.size(type=Agent) < network.generation_size:
             return RogersAgentFounder(network=network, participant=participant)
@@ -162,8 +162,7 @@ class RogersExperiment(Experiment):
         else:
             return True
 
-        is_passing = avg >= self.min_acceptable_performance
-        return is_passing
+        return avg >= self.min_acceptable_performance
 
     def data_check(self, participant):
         """Check a participants data."""
@@ -312,11 +311,7 @@ class RogersAgent(Agent):
         self.proportion = proportion
         is_blue = proportion > 0.5
 
-        if said_blue is is_blue:
-            self.score = 1
-        else:
-            self.score = 0
-
+        self.score = 1 if said_blue is is_blue else 0
         is_asocial = [
             i for i in infos if isinstance(i, LearningGene)
         ][0].contents == "asocial"

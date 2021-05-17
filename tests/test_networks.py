@@ -213,7 +213,7 @@ class TestNetworks(object):
         source = nodes.RandomBinaryStringSource(network=net)
         net.add_node(source)
 
-        for i in range(4):
+        for _ in range(4):
             agent = nodes.Agent(network=net)
             net.add_node(agent)
 
@@ -231,7 +231,7 @@ class TestNetworks(object):
         source = nodes.RandomBinaryStringSource(network=net)
         net.add_node(source)
 
-        for i in range(4):
+        for _ in range(4):
             agent = nodes.ReplicatorAgent(network=net)
             net.add_node(agent)
         self.db.commit()
@@ -243,7 +243,7 @@ class TestNetworks(object):
         self.db.add(net)
         self.db.commit()
 
-        for i in range(4):
+        for _ in range(4):
             agent = nodes.Agent(network=net)
             net.add_node(agent)
 
@@ -257,7 +257,7 @@ class TestNetworks(object):
         self.db.add(net)
         self.db.commit()
 
-        for i in range(10):
+        for _ in range(10):
             agent = nodes.Agent(network=net)
             net.add_node(agent)
 
@@ -270,7 +270,7 @@ class TestNetworks(object):
         self.db.add(net)
         self.db.commit()
 
-        for i in range(10):
+        for _ in range(10):
             agent = nodes.Agent(network=net)
             net.add_node(agent)
 
@@ -284,7 +284,7 @@ class TestNetworks(object):
         net = networks.FullyConnected()
         self.db.add(net)
         self.db.commit()
-        for i in range(4):
+        for _ in range(4):
             agent = nodes.Agent(network=net)
             net.add_node(agent)
 
@@ -297,7 +297,7 @@ class TestNetworks(object):
         self.db.add(net)
         self.db.commit()
 
-        for i in range(m0):
+        for _ in range(m0):
             agent = nodes.Agent(network=net)
             net.add_node(agent)
 
@@ -319,7 +319,7 @@ class TestNetworks(object):
         self.db.add(net)
         self.db.commit()
 
-        for i in range(6):
+        for _ in range(6):
             agent = nodes.Agent(network=net)
             net.add_node(agent)
 

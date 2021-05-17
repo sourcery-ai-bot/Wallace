@@ -83,7 +83,7 @@ class TestRogers(object):
 
             # work through the trials
             working = True
-            while working is True:
+            while working:
                 current_trial += 1
                 agent = None
                 transmission = None
@@ -93,7 +93,7 @@ class TestRogers(object):
                 try:
                     agent = session.post(url + '/node/' + my_id, headers=headers)
                     working = agent.status_code == 200
-                    if working is True:
+                    if working:
                         agent_id = agent.json()['node']['id']
                         args = {'info_type': "LearningGene"}
                         information = session.get(url + '/node/' + str(agent_id) + '/infos', params=args, headers=headers)
@@ -210,44 +210,44 @@ class TestRogers(object):
                     network = exp.get_network_for_participant(participant=p)
                     if network is None:
                         break
-                    else:
-                        agent = exp.create_node(
-                            participant_id=p_id,
-                            network=network)
-                        exp.add_node_to_network(
-                            participant_id=p_id,
-                            node=agent,
-                            network=network)
-                        self.db.commit()
-                        exp.node_post_request(participant_id=p_id, node=agent)
-                        self.db.commit()
-                        assign_stop_time = timenow()
-                        assign_time += (assign_stop_time - assign_start_time)
+                    agent = exp.create_node(
+                        participant_id=p_id,
+                        network=network)
+                    exp.add_node_to_network(
+                        participant_id=p_id,
+                        node=agent,
+                        network=network)
+                    self.db.commit()
+                    exp.node_post_request(participant_id=p_id, node=agent)
+                    self.db.commit()
+                    assign_stop_time = timenow()
+                    assign_time += (assign_stop_time - assign_start_time)
 
-                        process_start_time = timenow()
-                        agent.receive()
-                        from operator import attrgetter
-                        current_state = max(State.query.filter_by(network_id=agent.network_id).all(), key=attrgetter('creation_time')).contents
-                        if float(current_state) >= 0.5:
-                            right_answer = "blue"
-                            wrong_answer = "yellow"
-                        else:
-                            right_answer = "yellow"
-                            wrong_answer = "blue"
-                        if num_completed_participants == 0:
-                            info = Meme(origin=agent, contents=right_answer)
-                        else:
-                            if random.random() < 0.9:
-                                info = Meme(origin=agent, contents=right_answer)
-                            else:
-                                info = Meme(origin=agent, contents=wrong_answer)
-                        self.db.commit()
-                        exp.info_post_request(
-                            node=agent,
-                            info=info)
-                        #print("state: {}, answer: {}, score: {}, fitness {}".format(current_state, info.contents, agent.score, agent.fitness))
-                        process_stop_time = timenow()
-                        process_time += (process_stop_time - process_start_time)
+                    process_start_time = timenow()
+                    agent.receive()
+                    from operator import attrgetter
+                    current_state = max(State.query.filter_by(network_id=agent.network_id).all(), key=attrgetter('creation_time')).contents
+                    if float(current_state) >= 0.5:
+                        right_answer = "blue"
+                        wrong_answer = "yellow"
+                    else:
+                        right_answer = "yellow"
+                        wrong_answer = "blue"
+                    if (
+                        num_completed_participants != 0
+                        and random.random() < 0.9
+                        or num_completed_participants == 0
+                    ):
+                        info = Meme(origin=agent, contents=right_answer)
+                    else:
+                        info = Meme(origin=agent, contents=wrong_answer)
+                    self.db.commit()
+                    exp.info_post_request(
+                        node=agent,
+                        info=info)
+                    #print("state: {}, answer: {}, score: {}, fitness {}".format(current_state, info.contents, agent.score, agent.fitness))
+                    process_stop_time = timenow()
+                    process_time += (process_stop_time - process_start_time)
 
                 worked = exp.data_check(participant=p)
                 assert worked
@@ -304,10 +304,7 @@ class TestRogers(object):
                 vectors = network.vectors()
 
                 role = network.role
-                if role == "practice":
-                    for agent in agents:
-                        assert type(agent) == RogersAgentFounder
-                elif role == "catch":
+                if role in ["practice", "catch"]:
                     for agent in agents:
                         assert type(agent) == RogersAgentFounder
                 else:
@@ -350,7 +347,7 @@ class TestRogers(object):
                     if isinstance(v.origin, Agent):
                         assert v.origin.generation == v.destination.generation - 1
                     else:
-                        assert isinstance(v.origin, Source) or isinstance(v.origin, Environment)
+                        assert isinstance(v.origin, (Source, Environment))
 
                 for agent in agents:
                     if agent.generation == 0:
@@ -420,13 +417,12 @@ class TestRogers(object):
 
                     if lg.contents == "asocial":
                         assert State in types
-                        assert LearningGene in types
                         assert Meme not in types
                     else:
                         assert State not in types
-                        assert LearningGene in types
                         assert Meme in types
 
+                    assert LearningGene in types
             print("Testing transmissions...             done!")
 
             """

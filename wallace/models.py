@@ -224,12 +224,11 @@ class Participant(Base, SharedMixin):
         if self.failed is True:
             raise AttributeError(
                 "Cannot fail {} - it has already failed.".format(self))
-        else:
-            self.failed = True
-            self.time_of_death = timenow()
+        self.failed = True
+        self.time_of_death = timenow()
 
-            for n in self.nodes():
-                n.fail()
+        for n in self.nodes():
+            n.fail()
 
 
 class Question(Base, SharedMixin):
@@ -284,9 +283,8 @@ class Question(Base, SharedMixin):
         if self.failed is True:
             raise AttributeError(
                 "Cannot fail {} - it has already failed.".format(self))
-        else:
-            self.failed = True
-            self.time_of_death = timenow()
+        self.failed = True
+        self.time_of_death = timenow()
 
     def __json__(self):
         """Return json description of a question."""
@@ -545,12 +543,11 @@ class Network(Base, SharedMixin):
         if self.failed is True:
             raise AttributeError(
                 "Cannot fail {} - it has already failed.".format(self))
-        else:
-            self.failed = True
-            self.time_of_death = timenow()
+        self.failed = True
+        self.time_of_death = timenow()
 
-            for n in self.nodes():
-                n.fail()
+        for n in self.nodes():
+            n.fail()
 
     def calculate_full(self):
         """Set whether the network is full."""
@@ -811,14 +808,14 @@ class Node(Base, SharedMixin):
         if direction == "to":
             vectors = Vector.query.with_entities(Vector.destination_id)\
                 .filter_by(origin_id=self.id, failed=False).all()
-            destinations = set([v.destination_id for v in vectors])
+            destinations = {v.destination_id for v in vectors}
             for w in whom_ids:
                 connected.append(w in destinations)
 
         elif direction == "from":
             vectors = Vector.query.with_entities(Vector.origin_id)\
                 .filter_by(destination_id=self.id, failed=False).all()
-            origins = set([v.origin_id for v in vectors])
+            origins = {v.origin_id for v in vectors}
             for w in whom_ids:
                 connected.append(w in origins)
 
@@ -830,8 +827,8 @@ class Node(Base, SharedMixin):
                              or_(Vector.destination_id == self.id,
                                  Vector.origin_id == self.id))).all()
 
-            destinations = set([v.destination_id for v in vectors])
-            origins = set([v.origin_id for v in vectors])
+            destinations = set(v.destination_id for v in vectors)
+            origins = {v.origin_id for v in vectors}
 
             if direction == "either":
                 origins_destinations = destinations.union(origins)
@@ -1018,19 +1015,18 @@ class Node(Base, SharedMixin):
         if self.failed is True:
             raise AttributeError(
                 "Cannot fail {} - it has already failed.".format(self))
-        else:
-            self.failed = True
-            self.time_of_death = timenow()
-            self.network.calculate_full()
+        self.failed = True
+        self.time_of_death = timenow()
+        self.network.calculate_full()
 
-            for v in self.vectors():
-                v.fail()
-            for i in self.infos():
-                i.fail()
-            for t in self.transmissions(direction="all"):
-                t.fail()
-            for t in self.transformations():
-                t.fail()
+        for v in self.vectors():
+            v.fail()
+        for i in self.infos():
+            i.fail()
+        for t in self.transmissions(direction="all"):
+            t.fail()
+        for t in self.transformations():
+            t.fail()
 
     def connect(self, whom, direction="to"):
         """Create a vector from self to/from whom.
@@ -1388,12 +1384,11 @@ class Vector(Base, SharedMixin):
         if self.failed is True:
             raise AttributeError(
                 "Cannot fail {} - it has already failed.".format(self))
-        else:
-            self.failed = True
-            self.time_of_death = timenow()
+        self.failed = True
+        self.time_of_death = timenow()
 
-            for t in self.transmissions():
-                t.fail()
+        for t in self.transmissions():
+            t.fail()
 
 
 class Info(Base, SharedMixin):
@@ -1476,14 +1471,13 @@ class Info(Base, SharedMixin):
         if self.failed is True:
             raise AttributeError(
                 "Cannot fail {} - it has already failed.".format(self))
-        else:
-            self.failed = True
-            self.time_of_death = timenow()
+        self.failed = True
+        self.time_of_death = timenow()
 
-            for t in self.transmissions():
-                t.fail()
-            for t in self.transformations():
-                t.fail()
+        for t in self.transmissions():
+            t.fail()
+        for t in self.transformations():
+            t.fail()
 
     def transmissions(self, status="all"):
         """Get all the transmissions of this info.
@@ -1670,9 +1664,8 @@ class Transmission(Base, SharedMixin):
         if self.failed is True:
             raise AttributeError("Cannot fail {} - it has already failed."
                                  .format(self))
-        else:
-            self.failed = True
-            self.time_of_death = timenow()
+        self.failed = True
+        self.time_of_death = timenow()
 
 
 class Transformation(Base, SharedMixin):
@@ -1768,9 +1761,8 @@ class Transformation(Base, SharedMixin):
         if self.failed is True:
             raise AttributeError(
                 "Cannot fail {} - it has already failed.".format(self))
-        else:
-            self.failed = True
-            self.time_of_death = timenow()
+        self.failed = True
+        self.time_of_death = timenow()
 
 
 class Notification(Base, SharedMixin):

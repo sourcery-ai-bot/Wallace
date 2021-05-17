@@ -136,9 +136,11 @@ class AnimalInfo(Info):
         if contents is not None:
             self.contents = contents
         else:
-            data = {}
-            for prop, prop_range in self.properties.iteritems():
-                data[prop] = random.uniform(prop_range[0], prop_range[1])
+            data = {
+                prop: random.uniform(prop_range[0], prop_range[1])
+                for prop, prop_range in self.properties.iteritems()
+            }
+
             self.contents = json.dumps(data)
 
     def perturbed_contents(self):

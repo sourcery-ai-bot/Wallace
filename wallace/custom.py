@@ -88,8 +88,7 @@ except ImportError:
 
 def success_response(field=None, data=None, request_type=""):
     """Return a generic success response."""
-    data_out = {}
-    data_out["status"] = "success"
+    data_out = {"status": "success"}
     if field:
         data_out[field] = data
     print("{} request successful.".format(request_type))
@@ -352,10 +351,9 @@ def request_parameter(parameter, parameter_type=None, default=None,
         # if its a boolean, convert to a boolean
         if value in ["True", "False"]:
             return value == "True"
-        else:
-            msg = "{} {} request, non-boolean {}: {}".format(
-                request.url, request.method, parameter, value)
-            return error_response(error_type=msg)
+        msg = "{} {} request, non-boolean {}: {}".format(
+            request.url, request.method, parameter, value)
+        return error_response(error_type=msg)
     else:
         msg = "/{} {} request, unknown parameter type: {} for parameter {}"\
             .format(request.url, request.method, parameter_type, parameter)

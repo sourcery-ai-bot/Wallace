@@ -72,7 +72,7 @@ class TestProcesses(object):
             agent.receive()
 
         # Run a Moran process for 100 steps.
-        for i in xrange(100):
+        for _ in xrange(100):
             processes.moran_cultural(net)
             for agent in net.nodes(type=Agent):
                 agent.receive()
@@ -108,7 +108,7 @@ class TestProcesses(object):
             agent.receive()
 
         # Run a Moran process for 100 steps.
-        for i in range(100):
+        for _ in range(100):
             nodes.ReplicatorAgent(network=net)
             processes.moran_sexual(net)
             for agent in net.nodes(type=Agent):

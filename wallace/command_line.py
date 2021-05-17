@@ -229,8 +229,8 @@ def summary(app):
     click.echo("----------------")
     for s in summary:
         click.echo("{}\t| {}".format(s[0], s[1]))
-    num_101s = sum([s[1] for s in summary if s[0] == 101])
-    num_10xs = sum([s[1] for s in summary if s[0] >= 100])
+    num_101s = sum(s[1] for s in summary if s[0] == 101)
+    num_10xs = sum(s[1] for s in summary if s[0] >= 100)
     if num_10xs > 0:
         click.echo("\nYield: {:.2%}".format(1.0 * num_101s / num_10xs))
 
@@ -346,11 +346,7 @@ def scale_up_dynos(id):
 
 def deploy_sandbox_shared_setup(verbose=True, app=None, web_procs=1):
     """Set up Git, push to Heroku, and launch the app."""
-    if verbose:
-        out = None
-    else:
-        out = open(os.devnull, 'w')
-
+    out = None if verbose else open(os.devnull, 'w')
     (id, tmp) = setup_experiment(debug=False, verbose=verbose, app=app)
 
     # Log in to Heroku if we aren't already.
@@ -546,17 +542,17 @@ def qualify(qualification, value, worker):
         results = []
         continue_flag = True
         page = 1
-        while(continue_flag):
+        while (continue_flag):
             new_results = conn.get_qualifications_for_qualification_type(
                 qualification,
                 page_size=100,
                 page_number=page)
 
-            if(len(new_results) == 0):
+            if (len(new_results) == 0):
                 continue_flag = False
             else:
                 results.extend(new_results)
-                page = page + 1
+                page += 1
 
         return results
 
@@ -862,7 +858,7 @@ def verify_package(verbose=True):
         exps = [c for c in classes
                 if (c[1].__bases__[0].__name__ in "Experiment")]
 
-        if len(exps) == 0:
+        if not exps:
             log("✗ experiment.py does not define an experiment class.",
                 delay=0, chevrons=False, verbose=verbose)
             is_passing = False

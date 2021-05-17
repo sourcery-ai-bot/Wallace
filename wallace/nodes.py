@@ -59,10 +59,9 @@ class Source(Node):
 
     def create_information(self):
         """Create new infos on demand."""
-        info = self._info_type()(
+        return self._info_type()(
             origin=self,
             contents=self._contents())
-        return info
 
     def _info_type(self):
         """The type of info to be created."""
@@ -85,7 +84,7 @@ class RandomBinaryStringSource(Source):
 
     def _contents(self):
         """Generate a random binary string."""
-        return "".join([str(random.randint(0, 1)) for i in range(2)])
+        return "".join(str(random.randint(0, 1)) for i in range(2))
 
 
 class Environment(Node):
@@ -100,10 +99,9 @@ class Environment(Node):
         """
         if time is None:
             return max(self.infos(type=State), key=attrgetter('creation_time'))
-        else:
-            states = [
-                s for s in self.infos(type=State) if s.creation_time < time]
-            return max(states, key=attrgetter('creation_time'))
+        states = [
+            s for s in self.infos(type=State) if s.creation_time < time]
+        return max(states, key=attrgetter('creation_time'))
 
     def _what(self):
         """Return the most recent state."""

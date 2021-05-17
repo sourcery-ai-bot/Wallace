@@ -67,16 +67,18 @@ class Experiment(object):
 
     def setup(self):
         """Create the networks if they don't already exist."""
-        if not self.networks():
-            for _ in range(self.practice_repeats):
-                network = self.create_network()
-                network.role = "practice"
-                self.session.add(network)
-            for _ in range(self.experiment_repeats):
-                network = self.create_network()
-                network.role = "experiment"
-                self.session.add(network)
-            self.session.commit()
+        if self.networks():
+            return
+
+        for _ in range(self.practice_repeats):
+            network = self.create_network()
+            network.role = "practice"
+            self.session.add(network)
+        for _ in range(self.experiment_repeats):
+            network = self.create_network()
+            network.role = "experiment"
+            self.session.add(network)
+        self.session.commit()
 
     def create_network(self):
         """Return a new network."""

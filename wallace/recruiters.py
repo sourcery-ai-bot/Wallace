@@ -62,7 +62,7 @@ class SimulatedRecruiter(object):
 
     def recruit_participants(self, n=1, exp=None):
         """Recruit n participants."""
-        for i in xrange(n):
+        for _ in xrange(n):
             newcomer = exp.agent_type()
             exp.newcomer_arrival_trigger(newcomer)
 
